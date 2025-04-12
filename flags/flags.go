@@ -4,6 +4,7 @@ Add more ~~absraction~~ to Golang's [flag] package. Hehe...
 package flags
 
 import (
+	"flag"
 	"fmt"
 	"strings"
 
@@ -42,4 +43,22 @@ func (enum StringFlagEnum) DefaultUsageLine() string {
 	} else {
 		return enum.UsageLine()
 	}
+}
+
+// Check if a [flag.Flag] is passed by cli user.
+//   - @return first bool: Did the flag parse by the program developer?
+//   - @return second bool: Did user pass the flag argument? (Always false if first bool false)
+//
+// NOTE: It returns (true, true) if user do `yourcommand -u=` and is properly parsed.
+func IsFlagPassed(flagName string) (bool, bool) {
+	if flag.Lookup(flagName) == nil {
+		return false, false
+	}
+	wasSet := false
+	flag.Visit(func(f *flag.Flag) {
+		if f.Name == flagName {
+			wasSet = true
+		}
+	})
+	return true, wasSet
 }
