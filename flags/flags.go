@@ -45,6 +45,27 @@ func (enum StringFlagEnum) DefaultUsageLine() string {
 	}
 }
 
+// Write better help message for your command.
+// This function is the heart of this package.
+//
+// You can do something like:
+//
+//	flag.Usage = func() { flags.PrintHelp(args...) }
+//
+// Expect it prints to `stderr` or `stdout` like [flag.PrintDefaults].
+func PrintHelp(name string, desc string, subcmdGroupList []*SubcmdGroup) {
+	fmt.Fprintf(flag.CommandLine.Output(), "%s: ", name)
+	fmt.Fprintf(flag.CommandLine.Output(), "%s\n\n", desc)
+	fmt.Fprintf(flag.CommandLine.Output(), "Usage:\n")
+	flag.PrintDefaults()
+	fmt.Fprintf(flag.CommandLine.Output(), "\n")
+	var sb strings.Builder
+	for _, subcmdGroup := range subcmdGroupList {
+		subcmdGroup.Help(&sb)
+	}
+	fmt.Fprintf(flag.CommandLine.Output(), "%s", sb.String())
+}
+
 // Check if a [flag.Flag] is passed by cli user.
 //   - @return first bool: Did the flag parse by the program developer?
 //   - @return second bool: Did user pass the flag argument? (Always false if first bool false)
