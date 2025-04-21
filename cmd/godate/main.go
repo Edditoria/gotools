@@ -14,6 +14,7 @@ import (
 
 // Preset format of date and time.
 type presetFormat struct {
+	Name    string
 	Layout  string // in Go time format.
 	IsLocal bool   // to show local time or UTC time.
 	Usage   string // One-line usage.
@@ -29,12 +30,41 @@ func (p presetFormat) String() string {
 
 // Collection of preset format.
 var (
-	preDateTimeFriendly = presetFormat{"2006-01-02 15:04:05 Mon UTC-07", true, "friendly local date-time"}
-	preDateTimeUTC      = presetFormat{time.RFC3339, false, "RFC3339-compatible UTC date-time"}
-	preDateTimeStrict   = presetFormat{time.RFC3339, true, "RFC3339-compatible local date-time"}
-	preDateTimeSerial   = presetFormat{"2006-01-02-150405", true, "serial-like local date-time"}
-	preDateOnly         = presetFormat{"2006-01-02", true, "local date without time"}
-	preTimeOnly         = presetFormat{"15:04:05", true, "local time without date"}
+	preDateTimeFriendly = presetFormat{
+		Name:    "friendly",
+		Layout:  "2006-01-02 15:04:05 Mon UTC-07",
+		IsLocal: true,
+		Usage:   "friendly local date-time"}
+	preDateTimeUTC = presetFormat{
+		Name:    "utc",
+		Layout:  time.RFC3339,
+		IsLocal: false,
+		Usage:   "RFC3339-compatible UTC date-time",
+	}
+	preDateTimeStrict = presetFormat{
+		Name:    "strict",
+		Layout:  time.RFC3339,
+		IsLocal: true,
+		Usage:   "RFC3339-compatible local date-time",
+	}
+	preDateTimeSerial = presetFormat{
+		Name:    "serial",
+		Layout:  "2006-01-02-150405",
+		IsLocal: true,
+		Usage:   "serial-like local date-time",
+	}
+	preDateOnly = presetFormat{
+		Name:    "date-only",
+		Layout:  "2006-01-02",
+		IsLocal: true,
+		Usage:   "local date without time",
+	}
+	preTimeOnly = presetFormat{
+		Name:    "time-only",
+		Layout:  "15:04:05",
+		IsLocal: true,
+		Usage:   "local time without date",
+	}
 )
 
 var (
