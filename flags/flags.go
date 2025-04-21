@@ -53,7 +53,7 @@ func (enum StringFlagEnum) DefaultUsageLine() string {
 //	flag.Usage = func() { flags.PrintHelp(args...) }
 //
 // Expect it prints to `stderr` or `stdout` like [flag.PrintDefaults].
-func PrintHelp(name string, desc string, subcmdGroupList []*SubcmdGroup) {
+func PrintHelp(name string, desc string, subcmdGroupList []*SubcmdGroup, footnote string) {
 	fmt.Fprintf(flag.CommandLine.Output(), "%s: ", name)
 	fmt.Fprintf(flag.CommandLine.Output(), "%s\n\n", desc)
 	fmt.Fprintf(flag.CommandLine.Output(), "Usage:\n")
@@ -64,6 +64,7 @@ func PrintHelp(name string, desc string, subcmdGroupList []*SubcmdGroup) {
 		subcmdGroup.Help(&sb)
 	}
 	fmt.Fprintf(flag.CommandLine.Output(), "%s", sb.String())
+	fmt.Fprintf(flag.CommandLine.Output(), "%s\n", footnote)
 }
 
 // Check if a [flag.Flag] is passed by cli user.
