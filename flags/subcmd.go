@@ -12,6 +12,18 @@ type SubcmdGroup struct {
 	SubcmdList []*Subcmd
 }
 
+// Lookup to find subcommand using its name, that is exactly [flag.FlagSet.Name].
+//   - @return *Subcmd : If not found, it returns nil.
+//   - @return bool    : Represents "found" or not.
+func (group *SubcmdGroup) Lookup(subcmdName string) (*Subcmd, bool) {
+	for _, subcmd := range group.SubcmdList {
+		if subcmd.FlagSet.Name() == subcmdName {
+			return subcmd, true
+		}
+	}
+	return nil, false
+}
+
 // Generate help message of the [SubcmdGroup] session.
 // It is a part of full [PrintHelp].
 // The message will look like:
