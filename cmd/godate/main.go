@@ -16,6 +16,7 @@ import (
 const (
 	cliName     = "godate"
 	cliDesc     = "godate for Good-Oh Date! A friendly command-line tool for date and time."
+	cliFootnote = "Source code:\n  https://github.com/Edditoria/gotools"
 )
 
 // Preset format of date and time.
@@ -131,7 +132,7 @@ func main() {
 			SubcmdList: []*flags.Subcmd{subcmdUTC, subcmdStrict, subcmdSerial},
 		}
 		subcmdGroups := []*flags.SubcmdGroup{quickActions, quickActions}
-		flag.Usage = func() { flags.PrintHelp(cliName, cliDesc, subcmdGroups) }
+		flag.Usage = func() { flags.PrintHelp(cliName, cliDesc, subcmdGroups, cliFootnote) }
 		flag.Parse()
 
 		presetOpt, presetErr := handlePresetFlag()
