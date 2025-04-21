@@ -37,7 +37,7 @@ func (p presetFormat) String() string {
 
 // Skipped details field.
 func (p presetFormat) CreateSubcmd() *flags.Subcmd {
-	subcmd := flags.NewSubcmd(p.Name, "print "+p.Usage, "", flag.ExitOnError)
+	subcmd := flags.NewSubcmd(p.Name, "Print "+p.Usage, "", flag.ExitOnError)
 	return subcmd
 }
 
