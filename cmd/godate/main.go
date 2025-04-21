@@ -12,6 +12,12 @@ import (
 	"github.com/Edditoria/gotools/lists"
 )
 
+// CLI descriptions.
+const (
+	cliName     = "godate"
+	cliDesc     = "godate for Good-Oh Date! A friendly command-line tool for date and time."
+)
+
 // Preset format of date and time.
 type presetFormat struct {
 	Name    string
@@ -119,7 +125,15 @@ func main() {
 		os.Exit(exitCode)
 	default:
 		// When cli: godate [-flag...] or godate wrongArg(s)
+		quickActions := &flags.SubcmdGroup{
+			Name:       "Quick actions",
+			Summary:    "small commands for daily life",
+			SubcmdList: []*flags.Subcmd{subcmdUTC, subcmdStrict, subcmdSerial},
+		}
+		subcmdGroups := []*flags.SubcmdGroup{quickActions, quickActions}
+		flag.Usage = func() { flags.PrintHelp(cliName, cliDesc, subcmdGroups) }
 		flag.Parse()
+
 		presetOpt, presetErr := handlePresetFlag()
 		if presetErr != nil {
 			os.Stderr.WriteString(presetErr.Error() + "\n")
