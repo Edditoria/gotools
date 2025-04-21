@@ -7,6 +7,16 @@ import (
 	"github.com/Edditoria/gotools/flags"
 )
 
+func ExampleLongestSubcmdName() {
+	// The name "long", 4 characters:
+	subcmd1 := flags.NewSubcmd("long", "", "", flag.ExitOnError)
+	// The name "loooooong", 9 characters:
+	subcmd2 := flags.NewSubcmd("loooooong", "", "", flag.ExitOnError)
+	longest := flags.LongestSubcmdName([]*flags.Subcmd{subcmd1, subcmd2})
+	fmt.Printf("%d", longest)
+	// Output: 9
+}
+
 func ExampleSubcmd_HelpLine() {
 	add := flags.NewSubcmd("add", "Add file contents to the index", "", flag.ExitOnError)
 	checkout := flags.NewSubcmd("checkout", "Switch branches or restore working tree files", "", flag.ExitOnError)

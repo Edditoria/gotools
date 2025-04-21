@@ -12,22 +12,6 @@ type SubcmdGroup struct {
 	SubcmdList []*Subcmd
 }
 
-// Who's the longest?
-// If the list is empty, it returns 0.
-func (group *SubcmdGroup) LongestSubcmdName() int {
-	longest := 0
-	if len(group.SubcmdList) == 0 {
-		return 0
-	}
-	for _, subcmd := range group.SubcmdList {
-		thisSize := len(subcmd.FlagSet.Name())
-		if thisSize > longest {
-			longest = thisSize
-		}
-	}
-	return longest
-}
-
 // Generate help message of the [SubcmdGroup] session.
 // It is a part of full [PrintHelp].
 // The message will look like:
@@ -49,7 +33,7 @@ func (group *SubcmdGroup) Help(sb *strings.Builder) {
 	sb.WriteString(": ")
 	sb.WriteString(group.Summary)
 	sb.WriteString("\n\n")
-	longest := group.LongestSubcmdName()
+	longest := LongestSubcmdName(group.SubcmdList)
 	for _, subcmd := range group.SubcmdList {
 		sb.WriteString(subcmd.HelpLine(2, longest))
 		sb.WriteByte('\n')
@@ -102,4 +86,20 @@ func (subcmd *Subcmd) HelpLine(indent, minWidth int) string {
 	sb.WriteString(strings.Repeat(" ", margin))
 	sb.WriteString(subcmd.Summary)
 	return sb.String()
+}
+
+// Who's the longest?
+// If the list is empty, it returns 0.
+func LongestSubcmdName(subcmdList []*Subcmd) int {
+	longest := 0
+	if len(subcmdList) == 0 {
+		return 0
+	}
+	for _, subcmd := range subcmdList {
+		thisSize := len(subcmd.FlagSet.Name())
+		if thisSize > longest {
+			longest = thisSize
+		}
+	}
+	return longest
 }
