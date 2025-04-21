@@ -28,6 +28,12 @@ func (p presetFormat) String() string {
 	return time.Now().UTC().Format(p.Layout)
 }
 
+// Skipped details field.
+func (p presetFormat) CreateSubcmd() *flags.Subcmd {
+	subcmd := flags.NewSubcmd(p.Name, "print "+p.Usage, "", flag.ExitOnError)
+	return subcmd
+}
+
 // Collection of preset format.
 var (
 	preDateTimeFriendly = presetFormat{
@@ -88,6 +94,12 @@ func init() {
 }
 
 func main() {
+
+	// Prepare "Quick actions":
+	subcmdUTC := preDateTimeUTC.CreateSubcmd()
+	subcmdStrict := preDateTimeStrict.CreateSubcmd()
+	subcmdSerial := preDateTimeSerial.CreateSubcmd()
+
 	// When cli: godate (without any arg)
 	if len(os.Args) < 2 {
 		fmt.Fprintf(os.Stdout, "%s\n", preDateTimeFriendly)
@@ -96,14 +108,14 @@ func main() {
 
 	// When cli: godate [action] [-flag...]
 	switch os.Args[1] {
-	case "utc":
-		exitCode := handleQuickCommand("utc", &preDateTimeUTC)
+	case subcmdUTC.Name():
+		exitCode := handleQuickActions(subcmdUTC, &preDateTimeUTC)
 		os.Exit(exitCode)
-	case "strict":
-		exitCode := handleQuickCommand("strict", &preDateTimeStrict)
+	case subcmdStrict.Name():
+		exitCode := handleQuickActions(subcmdStrict, &preDateTimeStrict)
 		os.Exit(exitCode)
-	case "serial":
-		exitCode := handleQuickCommand("serial", &preDateTimeSerial)
+	case subcmdSerial.Name():
+		exitCode := handleQuickActions(subcmdSerial, &preDateTimeSerial)
 		os.Exit(exitCode)
 	default:
 		// When cli: godate [-flag...] or godate wrongArg(s)
@@ -133,12 +145,13 @@ func main() {
 
 // It will print messages in console.
 //   - @return Exit code.
-func handleQuickCommand(name string, preFmt *presetFormat) int {
+func handleQuickActions(subcmd *flags.Subcmd, preFmt *presetFormat) int {
 	if len(os.Args) == 3 && (os.Args[2] == "-h" || os.Args[2] == "--help") {
-		fmt.Fprintf(os.Stdout, "Print %s\n", preFmt.Usage)
+		fmt.Fprintf(os.Stdout, "%s\n", subcmd.Summary)
 		return 0
 	}
 	if len(os.Args) > 2 {
+		name := subcmd.Name()
 		fmt.Fprintf(os.Stderr, "godate: %s does not take argument\nSee: godate %s -h\n", name, name)
 		return 2
 	}
