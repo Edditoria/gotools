@@ -6,9 +6,10 @@ import (
 )
 
 // Subcommand group for building help message.
+// To skip printing group name and summary, pass an empty string.
 type SubcmdGroup struct {
-	Name       string // Group name.
-	Summary    string // Short description for main help.
+	Name       string // Group name. Optional.
+	Summary    string // Short description for main help. Optional.
 	SubcmdList []*Subcmd
 }
 
@@ -30,8 +31,8 @@ func (group *SubcmdGroup) Lookup(subcmdName string) (*Subcmd, bool) {
 //
 //	[Name]: [Heading to brief]
 //
-//	  [subcmd1]  [subcmd description]
-//	  [subcmd2]  [subcmd description]
+//	  subcmd1  [subcmd description]
+//	  subcmd2  [subcmd description]
 //	  (and so on...)
 //
 // It already takes care of indentation and space alignment for you.
@@ -42,10 +43,21 @@ func (group *SubcmdGroup) Help() (string, error) {
 	// So, it does not need to check error. Just return nil finally.
 	// See: https://pkg.go.dev/strings#Builder.Write
 	var sb strings.Builder
-	sb.WriteString(group.Name)
-	sb.WriteString(": ")
-	sb.WriteString(group.Summary)
-	sb.WriteString("\n\n")
+	hasName := group.Name != ""
+	hasSummary := group.Summary != ""
+	if hasName && hasSummary {
+		sb.WriteString(group.Name)
+		sb.WriteString(": ")
+		sb.WriteString(group.Summary)
+		sb.WriteString("\n\n")
+	} else if hasName {
+		sb.WriteString(group.Name)
+		sb.WriteString(":")
+		sb.WriteString("\n\n")
+	} else if hasSummary {
+		sb.WriteString(group.Summary)
+		sb.WriteString("\n\n")
+	}
 	longest := LongestSubcmdName(group.SubcmdList)
 	for _, subcmd := range group.SubcmdList {
 		sb.WriteString(subcmd.HelpLine(2, longest))
