@@ -59,14 +59,15 @@ func (group *SubcmdGroup) Help() (string, error) {
 // Recommend to start with [NewSubcmd] function.
 type Subcmd struct {
 	flag.FlagSet        // Embed [flag.FlagSet] with all methods.
-	Summary      string // Short description for main help and subcommand help.
-	Details      string // Long description for subcommand help.
+	Summary      string // Short description for main help and subcommand help. Optional.
+	Details      string // TODO: Long description for subcommand help. Optional.
 }
 
 // Create a new [Subcmd]. It will create and embed a [flag.FlagSet] for you.
+// To skip printing summary and details, pass an empty string.
 //   - @param name          : Use for [flag.NewFlagSet].
-//   - @param summary       : Short description for main help and subcommand help.
-//   - @param details       : Long description for subcommand help.
+//   - @param summary       : Short description for main help and subcommand help, or empty string.
+//   - @param details       : Long description for subcommand help, or empty string.
 //   - @param errorHandling : Use for [flag.NewFlagSet].
 //
 // NOTE: You still need to parse the `FlagSet` in your program.
@@ -89,16 +90,18 @@ func (subcmd *Subcmd) HelpLine(indent, minWidth int) string {
 	var sb strings.Builder
 	sb.WriteString(strings.Repeat(" ", indent))
 	name := subcmd.FlagSet.Name()
-	nameLen := len(name)
-	var margin int
-	if nameLen > minWidth {
-		margin = 2
-	} else {
-		margin = minWidth - nameLen + 2
-	}
 	sb.WriteString(name)
-	sb.WriteString(strings.Repeat(" ", margin))
-	sb.WriteString(subcmd.Summary)
+	if subcmd.Summary != "" {
+		nameLen := len(name)
+		var margin int
+		if nameLen > minWidth {
+			margin = 2
+		} else {
+			margin = minWidth - nameLen + 2
+		}
+		sb.WriteString(strings.Repeat(" ", margin))
+		sb.WriteString(subcmd.Summary)
+	}
 	return sb.String()
 }
 
