@@ -61,7 +61,8 @@ func PrintHelp(name string, desc string, subcmdGroupList []*SubcmdGroup, footnot
 	fmt.Fprintf(flag.CommandLine.Output(), "\n")
 	var sb strings.Builder
 	for _, subcmdGroup := range subcmdGroupList {
-		subcmdGroup.Help(&sb)
+		msg, _ := subcmdGroup.Help()
+		sb.WriteString(msg)
 	}
 	fmt.Fprintf(flag.CommandLine.Output(), "%s", sb.String())
 	fmt.Fprintf(flag.CommandLine.Output(), "%s\n", footnote)

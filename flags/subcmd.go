@@ -32,15 +32,16 @@ func (group *SubcmdGroup) Lookup(subcmdName string) (*Subcmd, bool) {
 //
 //	  [subcmd1]  [subcmd description]
 //	  [subcmd2]  [subcmd description]
-//	  [subcmd3]  [subcmd description]
 //	  (and so on...)
 //
-// For efficiency, this function takes a [strings.Builder].
-// You can "continue" to build string in other functions.
-// When everything ready, do `sb.String()` to build the string.
-//
-// The output ends with a new-line character.
-func (group *SubcmdGroup) Help(sb *strings.Builder) {
+// It already takes care of indentation and space alignment for you.
+//   - @return string : The output always ends with one empty line.
+//   - @return error  : Always nil because of [strings.Builder], but better to check error for future-proof.
+func (group *SubcmdGroup) Help() (string, error) {
+	// The implementation of WriteString and WriteByte always returns the error nil.
+	// So, it does not need to check error. Just return nil finally.
+	// See: https://pkg.go.dev/strings#Builder.Write
+	var sb strings.Builder
 	sb.WriteString(group.Name)
 	sb.WriteString(": ")
 	sb.WriteString(group.Summary)
@@ -51,6 +52,7 @@ func (group *SubcmdGroup) Help(sb *strings.Builder) {
 		sb.WriteByte('\n')
 	}
 	sb.WriteByte('\n')
+	return sb.String(), nil
 }
 
 // Subcommand to expand [flag.FlagSet] features.
